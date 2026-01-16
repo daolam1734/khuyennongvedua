@@ -1,0 +1,9 @@
+{
+  "name": "Dừa Việt - Khuyến Nông Số",
+  "description": "Ứng dụng trợ lý ảo chuyên sâu về kỹ thuật trồng và chăm sóc cây dừa, hỗ trợ chẩn đoán sâu bệnh qua hình ảnh.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
