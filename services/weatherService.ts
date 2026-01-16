@@ -24,24 +24,31 @@ export const getWMODescription = (code: number): string => {
 
 export const fetchWeatherData = async (): Promise<WeatherData> => {
   try {
-    // 1. Get Location
+    // 1. Get Location with a shorter timeout to avoid hanging
     const position = await new Promise<GeolocationPosition>((resolve, reject) => {
       if (!navigator.geolocation) {
-        reject(new Error("Geolocation not supported"));
+        // Silently resolve null if not supported
+        resolve(null as any);
       } else {
-        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+        navigator.geolocation.getCurrentPosition(resolve, (err) => {
+           // Silently resolve null on error/denial to fallback to default
+           resolve(null as any);
+        }, { timeout: 3000 });
       }
-    }).catch(() => null);
+    });
 
     const lat = position ? position.coords.latitude : DEFAULT_LAT;
     const lon = position ? position.coords.longitude : DEFAULT_LON;
 
-    // 2. Fetch from Open-Meteo (Free, no API key required)
+    // 2. Fetch from Open-Meteo
     const response = await fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,is_day&timezone=auto`
-    );
+    ).catch(err => {
+        // Handle network error specifically
+        throw new Error("Network request failed"); 
+    });
 
-    if (!response.ok) throw new Error("Weather API failed");
+    if (!response.ok) throw new Error("Weather API status not OK");
 
     const data = await response.json();
     const current = data.current;
@@ -57,21 +64,24 @@ export const fetchWeatherData = async (): Promise<WeatherData> => {
     };
 
   } catch (error) {
-    console.error("Weather fetch error", error);
+    // Log warning instead of error to reduce console noise for "Failed to fetch"
+    console.warn("Weather service unavailable, using default fallback.", error);
+    
     return {
-      temp: 30, // Fallback
+      temp: 30, 
       humidity: 80,
       precipitation: 0,
       weatherCode: 1,
       description: "Không có dữ liệu thời tiết",
       isDay: true,
       loading: false,
-      error: "Không thể lấy dữ liệu thời tiết"
+      error: "Thời tiết: Tạm thời gián đoạn"
     };
   }
 };
 
 export const getWeatherAdvice = (weather: WeatherData): string => {
+  if (weather.error) return "Vui lòng kiểm tra kết nối mạng để xem thời tiết.";
   if (weather.precipitation > 2) {
     return "Đang có mưa. Tạm ngưng tưới nước và kiểm tra thoát nước vườn dừa.";
   }

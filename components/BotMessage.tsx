@@ -15,10 +15,13 @@ const BotMessage: React.FC<BotMessageProps> = ({ message }) => {
       </div>
       <div className="flex-1 bg-white p-4 rounded-r-xl rounded-bl-xl shadow-sm border border-gray-100 text-gray-800 text-sm md:text-base leading-relaxed">
         {message.isLoading ? (
-          <div className="flex space-x-1 h-5 items-center">
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+          <div className="flex items-center gap-3 py-1">
+             <div className="flex space-x-1">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+             </div>
+             <span className="text-xs text-emerald-600 font-medium animate-pulse">Kỹ sư đang suy nghĩ...</span>
           </div>
         ) : (
           <div className="prose prose-sm prose-emerald max-w-none">

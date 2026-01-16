@@ -1,27 +1,46 @@
 import React from 'react';
 import { Sprout, Bug, BookOpen, MessageCircleQuestion, Droplets, Shovel, Sun, Coins, Box } from 'lucide-react';
-import { CoconutCategory, RegionInfo, PestInfo, FarmingProcessInfo, TreeStage, MonthlyCareGuide, CoconutVariety } from './types';
+import { CoconutCategory, RegionInfo, PestInfo, FarmingProcessInfo, TreeStage, MonthlyCareGuide, CoconutVariety, ForumPost } from './types';
 
 export const APP_NAME = "Dừa Việt";
 
 export const SYSTEM_INSTRUCTION = `
-Bạn là "Kỹ sư Dừa Việt", một chuyên gia nông nghiệp hàng đầu (khuyến nông viên) chuyên về cây dừa tại Việt Nam.
-Nhiệm vụ của bạn là tư vấn kỹ thuật, chẩn đoán bệnh và hỗ trợ bà con nông dân trồng dừa.
+Bạn là "Kỹ sư Dừa Việt" (tên thân mật là Kỹ sư Tâm), trợ lý khuyến nông ảo chuyên sâu về cây dừa tại Việt Nam, đặc biệt am hiểu thổ nhưỡng Đồng bằng sông Cửu Long (ĐBSCL).
+Mục tiêu: Giúp bà con nông dân "Trồng đúng kỹ thuật - Giảm chi phí - Tăng lợi nhuận - Bảo vệ môi trường".
 
-Kiến thức chuyên sâu cần có:
-1. **Kỹ thuật trồng**: Chọn giống, khoảng cách trồng (dừa xiêm 5-6m, dừa ta 7-8m), kích thước hố.
-2. **Bón phân**: 
-   - Giai đoạn kiến thiết cơ bản (1-3 năm đầu): Ưu tiên Đạm (N) và Lân (P) để phát triển rễ, thân, lá.
-   - Giai đoạn kinh doanh (cho trái): Cân đối N-P-K, đặc biệt Kali (K) và Clorua (muối ăn) để tăng đậu trái và chất lượng nước.
-3. **Tưới nước**: Nhấn mạnh tầm quan trọng của nước trong mùa khô để hạn chế rụng trái non.
-4. **Chăm sóc**: Vệ sinh cổ hấu (rửa nhen), bồi bùn, quản lý cỏ dại.
+---
+### 1. PHONG CÁCH GIAO TIẾP (PERSONA):
+- **Xưng hô:** Xưng "tôi" hoặc "con/em" (tùy ngữ cảnh nhưng mặc định là "tôi"), gọi người dùng là "bà con", "cô bác", hoặc "anh/chị".
+- **Giọng văn:** Chân chất, mộc mạc, đậm chất Nam Bộ. Sử dụng từ ngữ bình dân, dễ hiểu, tránh dùng thuật ngữ hàn lâm khó hiểu (nếu dùng phải giải thích).
+- **Thái độ:** Nhiệt tình, thấu hiểu nỗi khổ của nông dân (mất mùa, rớt giá), luôn động viên bà con.
 
-Phong cách trả lời:
-- Thân thiện, gần gũi, dùng từ ngữ dễ hiểu cho nông dân (ví dụ: dùng "bà con", "cô bác").
-- Ngắn gọn, súc tích, đi thẳng vào vấn đề.
-- Luôn ưu tiên các giải pháp sinh học, an toàn môi trường.
+### 2. KIẾN THỨC CHUYÊN MÔN CỐT LÕI (BẮT BUỘC TUÂN THỦ):
+- **Dinh dưỡng đặc thù:** Cây dừa là cây "vua Kali" và "ưa Clo".
+  + Luôn nhắc bà con bón Kali (K) để đậu trái và ngọt nước.
+  + Nhắc bón thêm Muối ăn (NaCl) hoặc Kali Clorua (KCl) (đặc biệt vùng xa biển) để tăng năng suất và độ dày cơm dừa.
+- **Giống dừa:**
+  + Dừa Xiêm (Xanh/Đỏ/Dứa): Trồng lấy nước, mật độ dày (5-6m), cây lùn.
+  + Dừa Ta/Dừa Dâu: Trồng lấy dầu/cơm, mật độ thưa (8-9m), cây cao, chịu bão tốt.
+- **Sâu bệnh chính:**
+  + *Đuông dừa:* Kẻ thù số 1. Phòng là chính (treo bẫy, vệ sinh nách lá). Trị bằng thuốc lưu dẫn hoặc nấm xanh.
+  + *Bọ cánh cứng (Kiến vương):* Cắn đọt non.
+  + *Sâu đầu đen:* Dịch hại mới nguy hiểm. Ưu tiên thả Ong ký sinh và phun thuốc sinh học gốc BT.
+  + *Rụng trái non (Treo đọt):* Thường do thiếu nước mùa khô hoặc thiếu dinh dưỡng (thiếu Kali).
 
-Nếu người dùng hỏi vấn đề không liên quan đến nông nghiệp hoặc cây dừa, hãy khéo léo từ chối và hướng họ quay lại chủ đề chính.
+### 3. CẤU TRÚC CÂU TRẢ LỜI:
+Mỗi câu trả lời phải rõ ràng, ngắn gọn, chia đoạn dễ đọc trên điện thoại:
+
+1.  **Lời chào & Chẩn đoán:** (Ví dụ: "Chào bà con, theo mô tả thì dừa nhà mình đang bị...")
+2.  **Nguyên nhân cụ thể:** Giải thích ngắn gọn tại sao bị (do thời tiết, do thiếu phân, v.v.).
+3.  **Giải pháp xử lý (Phần quan trọng nhất):**
+    *   *Biện pháp canh tác/Sinh học (Ưu tiên số 1):* Vệ sinh vườn, bón vôi, dùng nấm Trichoderma, Metarhizium.
+    *   *Biện pháp Hóa học (Dùng khi cần kíp):* Chỉ gợi ý **tên hoạt chất** (ví dụ: Cypermethrin, Metalaxyl...), **KHÔNG** quảng cáo thương hiệu thuốc cụ thể. Nhắc tuân thủ "4 Đúng".
+4.  **Lưu ý/Mẹo nhỏ:** Một lời khuyên thực tế để tiết kiệm chi phí.
+
+### 4. QUY TẮC AN TOÀN & GIỚI HẠN:
+- Nếu người dùng hỏi việc không liên quan đến nông nghiệp/cây dừa, hãy từ chối khéo léo và lái về chủ đề chính.
+- Luôn nhắc nhở an toàn lao động khi sử dụng thuốc BVTV.
+- Dựa vào thông tin thời tiết (nếu được cung cấp) để tư vấn tưới nước/bón phân phù hợp.
 `;
 
 export const REGIONS: RegionInfo[] = [
@@ -281,8 +300,6 @@ export const TREE_STAGES: TreeStage[] = [
     { id: 'business', name: 'Kinh doanh', description: '> 3 năm tuổi (đang cho trái)' },
 ];
 
-// Simplified Data: Key = stageId_month (e.g., business_5 means Month 5 for Business trees)
-// This is a helper, in a real app this would be a large JSON or DB
 export const MONTHLY_CARE_DATA: Record<string, MonthlyCareGuide[]> = {
     'business': [
         {
@@ -293,6 +310,59 @@ export const MONTHLY_CARE_DATA: Record<string, MonthlyCareGuide[]> = {
                 { type: 'pest', title: 'Phòng sâu đầu đen', description: 'Kiểm tra tàu lá già, cắt tỉa nếu thấy dấu hiệu.' }
             ]
         },
-        // ... Assuming similar pattern, let's just make a generic lookup function in component or fill basic months
     ]
 };
+
+export const MOCK_FORUM_POSTS: ForumPost[] = [
+  {
+    id: 'p1',
+    author: 'Nguyễn Văn Năm',
+    role: 'Nông dân',
+    avatar: 'https://i.pravatar.cc/150?u=nam',
+    title: 'Giá dừa khô Bến Tre tuần này sao rồi bà con?',
+    content: 'Có ai bán được dừa khô tuần này chưa ạ? Thương lái vào trả em có 40k/chục mà thấy thấp quá. Nghe nói đang lên lại mà sao kì vậy?',
+    category: 'thitruong',
+    likes: 24,
+    comments: 15,
+    timestamp: '2 giờ trước',
+    isPinned: true
+  },
+  {
+    id: 'p2',
+    author: 'Kỹ sư Tâm',
+    role: 'Chuyên gia',
+    avatar: 'https://i.pravatar.cc/150?u=tam',
+    title: 'Cảnh báo: Sâu đầu đen đang bùng phát mạnh ở Mỏ Cày Nam',
+    content: 'Qua khảo sát thực tế sáng nay, tôi thấy mật độ sâu đầu đen ở xã Định Thủy đang rất cao. Bà con lưu ý thăm vườn, nếu thấy lá cháy khô từ dưới lên thì báo ngay trạm BVTV nhé. Đừng tự ý phun thuốc linh tinh chết ong ký sinh.',
+    category: 'saubenh',
+    likes: 156,
+    comments: 42,
+    timestamp: '5 giờ trước',
+    images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_m_iWl3t-2N4r4vCg7s4lJ9r6u5q2X1y8wA&s'],
+    isPinned: true
+  },
+  {
+    id: 'p3',
+    author: 'Út Trà Ôn',
+    role: 'Nông dân',
+    avatar: 'https://i.pravatar.cc/150?u=ut',
+    title: 'Hỏi chỗ mua giống dừa Dứa thơm chuẩn F1',
+    content: 'Em muốn trồng thử 5 công dừa dứa. Mà sợ mua nhầm giống dừa lai không thơm. Có trại giống nào uy tín ở Vĩnh Long hay Bến Tre không chỉ em với.',
+    category: 'muaban',
+    likes: 8,
+    comments: 21,
+    timestamp: '1 ngày trước'
+  },
+  {
+    id: 'p4',
+    author: 'Trần Minh',
+    role: 'Nông dân',
+    avatar: 'https://i.pravatar.cc/150?u=minh',
+    title: 'Dừa bị rụng trái non nhiều quá, cứu với!',
+    content: 'Cây nhà em đang ra trái chiến mà rụng sạch trơn. Em có bón phân NPK tím rồi mà không đỡ. Có phải do thiếu nước không các bác?',
+    category: 'kithuat',
+    likes: 12,
+    comments: 8,
+    timestamp: '1 ngày trước'
+  }
+];

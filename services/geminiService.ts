@@ -7,31 +7,18 @@ const apiKey = process.env.API_KEY;
 // Initialize client
 const ai = new GoogleGenAI({ apiKey: apiKey });
 
+// Tối ưu hóa prompt hệ thống để ngắn gọn hơn, giảm thời gian xử lý token đầu vào
 const getRegionalInstruction = (regionName: string, weather?: WeatherData) => {
   let weatherContext = "";
   if (weather && !weather.error) {
-    weatherContext = `
-    THÔNG TIN THỜI TIẾT THỰC TẾ TẠI CHỖ NGƯỜI DÙNG:
-    - Nhiệt độ: ${weather.temp}°C
-    - Độ ẩm: ${weather.humidity}%
-    - Tình trạng: ${weather.description}
-    - Lượng mưa: ${weather.precipitation}mm
-    
-    HÃY SỬ DỤNG THÔNG TIN NÀY ĐỂ TƯ VẤN CỤ THỂ HƠN (Ví dụ: nếu đang mưa thì khuyên không bón phân, nếu nắng nóng thì khuyên tưới nước).
-    `;
+    weatherContext = `THỜI TIẾT HIỆN TẠI: Nhiệt độ ${weather.temp}°C, ${weather.description}. Lượng mưa: ${weather.precipitation}mm. => Hãy điều chỉnh lời khuyên bón phân/tưới nước dựa trên thời tiết này.`;
   }
 
   return `${SYSTEM_INSTRUCTION}
   
-  THÔNG TIN QUAN TRỌNG:
-  Người dùng đang canh tác tại vùng: "${regionName}".
-  Hãy điều chỉnh lời khuyên của bạn cho phù hợp với điều kiện thổ nhưỡng, khí hậu và dịch hại đặc thù của vùng này.
-  Ví dụ: 
-  - ĐBSCL: Chú ý phèn, mặn, mương liếp.
-  - Miền Trung: Chú ý giữ ẩm đất cát, gió bão, sâu bệnh mùa nắng nóng.
-  - Phía Bắc: Chú ý chống rét.
-
-  ${weatherContext}
+  THÔNG TIN NGỮ CẢNH (CONTEXT):
+  - Vùng canh tác: "${regionName}" (Lưu ý đặc thù thổ nhưỡng vùng này).
+  - ${weatherContext}
   `;
 };
 
@@ -42,7 +29,8 @@ export const generateTextResponse = async (
   weatherData?: WeatherData
 ): Promise<string> => {
   try {
-    const model = 'gemini-3-flash-preview'; // Fast and smart for chat
+    // Sử dụng model Flash cho tốc độ phản hồi nhanh, cân bằng với chất lượng
+    const model = 'gemini-3-flash-preview'; 
     
     const contents = [
       ...history.map(h => ({ role: h.role, parts: h.parts })),
@@ -54,7 +42,8 @@ export const generateTextResponse = async (
       contents: contents,
       config: {
         systemInstruction: getRegionalInstruction(regionName, weatherData),
-        temperature: 0.7, // Creative but grounded
+        temperature: 0.5, // Giảm temperature để câu trả lời tập trung và chính xác hơn
+        maxOutputTokens: 4000, // Tăng giới hạn để đảm bảo câu trả lời không bị cắt giữa chừng
       }
     });
 
@@ -67,12 +56,11 @@ export const generateTextResponse = async (
 
 export const analyzeImage = async (
   base64Image: string, 
-  promptText: string = "Hãy nhận diện sâu bệnh và tư vấn cách phòng trừ cho cây dừa này.",
+  promptText: string = "Nhận diện sâu bệnh và tư vấn cách phòng trừ.",
   regionName: string = "Đồng bằng sông Cửu Long"
 ): Promise<string> => {
   try {
-    // Sử dụng Gemini 3 Pro cho khả năng suy luận hình ảnh phức tạp và chính xác cao hơn
-    const model = 'gemini-3-pro-preview'; 
+    const model = 'gemini-3-flash-preview'; 
 
     const imagePart = {
       inlineData: {
@@ -81,44 +69,31 @@ export const analyzeImage = async (
       }
     };
     
-    // Xây dựng Context chuyên sâu
-    const pestContext = PEST_DATABASE.map(p => `- ${p.name} (${p.scientificName})`).join('\n');
+    const pestNames = PEST_DATABASE.map(p => p.name).join(', ');
     
     const expertSystemPrompt = `
-    Bạn là một Chuyên gia Bệnh học Thực vật (Plant Pathologist) cao cấp từ Viện Nghiên cứu Dầu & Cây có dầu (IOOP) Việt Nam.
-    Nhiệm vụ của bạn là phân tích hình ảnh cây dừa được cung cấp để chẩn đoán chính xác tình trạng sức khỏe.
+    Bạn là Kỹ sư Dừa Việt (Kỹ sư Tâm). Phân tích ảnh cây dừa tại vùng ${regionName}.
+    Tham chiếu danh sách sâu bệnh phổ biến: ${pestNames}.
 
-    DANH SÁCH CÁC BỆNH/SÂU HẠI PHỔ BIẾN CẦN LƯU Ý (Tham chiếu):
-    ${pestContext}
+    NHIỆM VỤ:
+    1. Quan sát kỹ các dấu hiệu trên lá, thân, quả.
+    2. Chẩn đoán chính xác tên bệnh/sâu hại.
+    3. Đưa ra phác đồ điều trị chi tiết (ưu tiên sinh học).
 
-    BỐI CẢNH CANH TÁC:
-    - Vùng trồng: ${regionName}
-    
-    YÊU CẦU PHÂN TÍCH (QUAN TRỌNG):
-    1. Quan sát kỹ lưỡng các dấu hiệu trên lá (đốm, cháy, cắn phá), thân (lỗ đục, nhựa), hoặc quả.
-    2. Nếu hình ảnh không rõ ràng hoặc không phải cây dừa, hãy báo cáo trung thực.
-    3. Ưu tiên các biện pháp sinh học (IPM) trước khi đề xuất thuốc hóa học.
-    
-    HÃY TRẢ LỜI THEO CẤU TRÚC MARKDOWN SAU:
-    
-    ### 1. Kết quả Chẩn đoán
-    *   **Tên bệnh/Sâu hại:** [Tên Tiếng Việt] - *[Tên Khoa học]*
-    *   **Độ tin cậy:** [Cao/Trung bình/Thấp]
-    *   **Mức độ nghiêm trọng:** [Khẩn cấp/Cần theo dõi/Nhẹ]
+    YÊU CẦU TRẢ LỜI (Markdown):
+    ### 1. Chẩn đoán & Mức độ
+    * Tên bệnh: ...
+    * Mức độ hại: ...
 
     ### 2. Dấu hiệu nhận biết qua ảnh
-    *   [Mô tả chi tiết các triệu chứng nhìn thấy được trên ảnh, ví dụ: vết cắn hình chữ V, đốm vàng quầng nâu...]
+    * ...
 
-    ### 3. Nguyên nhân & Cơ chế
-    *   Do [Nấm/Vi khuẩn/Côn trùng/Dinh dưỡng].
-    *   Điều kiện phát sinh: [Liên hệ với khí hậu vùng ${regionName}].
+    ### 3. Giải pháp điều trị (Quan trọng)
+    * **Biện pháp sinh học/Canh tác:** ...
+    * **Biện pháp hóa học (nếu cần kíp):** (Chỉ nêu tên hoạt chất, nhắc bà con nguyên tắc 4 đúng).
 
-    ### 4. Phác đồ điều trị (Chuẩn Khuyến Nông)
-    *   **Biện pháp canh tác/Sinh học (Ưu tiên):** [Liệt kê cụ thể, ví dụ: nấm xanh, ong ký sinh, vệ sinh...]
-    *   **Biện pháp hóa học (Khi cần thiết):** [Nêu tên hoạt chất thuốc BVTV được phép sử dụng, KHÔNG nêu tên thương mại cụ thể trừ khi rất phổ biến].
-
-    ### 5. Khuyến nghị phòng ngừa
-    *   [Lời khuyên ngắn gọn để tránh tái phát]
+    ### 4. Lời khuyên phòng ngừa
+    * ...
     `;
 
     const textPart = {
@@ -132,7 +107,8 @@ export const analyzeImage = async (
       },
       config: {
         systemInstruction: expertSystemPrompt,
-        temperature: 0.4, // Giảm temperature để tăng tính chính xác, thực tế
+        temperature: 0.4,
+        maxOutputTokens: 4000, // Tăng giới hạn token cho phân tích ảnh chi tiết
       }
     });
 

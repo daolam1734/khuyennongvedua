@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Message, Sender, RegionInfo, WeatherData } from '../types';
 import UserMessage from '../components/UserMessage';
 import BotMessage from '../components/BotMessage';
-import { Send, Image as ImageIcon, MapPin } from 'lucide-react';
+import { Send, Image as ImageIcon, MapPin, Loader2 } from 'lucide-react';
 import { generateTextResponse } from '../services/geminiService';
 
 interface ChatPageProps {
@@ -140,7 +140,16 @@ const ChatPage: React.FC<ChatPageProps> = ({ initialPrompt, clearInitialPrompt, 
       </div>
 
       <div className="bg-white border-t border-gray-200 p-3 lg:p-4">
-        <div className="max-w-3xl mx-auto relative flex items-end gap-2 bg-gray-100 rounded-2xl p-2">
+        {isLoading && (
+            <div className="max-w-3xl mx-auto text-xs text-emerald-600 mb-2 pl-2 flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                Kỹ sư Dừa Việt đang trả lời...
+            </div>
+        )}
+        <div className="max-w-3xl mx-auto relative flex items-end gap-2 bg-gray-100 rounded-2xl p-2 transition-all ring-1 ring-transparent focus-within:ring-emerald-200">
             <button className="p-2 text-gray-400 hover:text-emerald-600 transition-colors">
                  <ImageIcon size={24} />
             </button>
@@ -149,7 +158,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ initialPrompt, clearInitialPrompt, 
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={onKeyDown}
               placeholder="Nhập câu hỏi tại đây..."
-              className="flex-1 bg-transparent border-none focus:ring-0 resize-none max-h-32 py-3 text-gray-800 placeholder-gray-500"
+              className="flex-1 bg-transparent border-none focus:ring-0 resize-none max-h-32 py-3 text-gray-800 placeholder-gray-500 outline-none"
               rows={1}
               style={{ minHeight: '44px' }}
             />
@@ -160,9 +169,9 @@ const ChatPage: React.FC<ChatPageProps> = ({ initialPrompt, clearInitialPrompt, 
                 inputValue.trim() && !isLoading
                   ? 'bg-emerald-600 text-white shadow-md hover:bg-emerald-700' 
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              } transition-all`}
+              } transition-all flex items-center justify-center`}
             >
-              <Send size={20} />
+              {isLoading ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
             </button>
         </div>
       </div>

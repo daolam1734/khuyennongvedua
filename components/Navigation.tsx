@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppRoute } from '../types';
-import { Home, MessageSquare, Camera, BookOpen, CalendarCheck } from 'lucide-react';
+import { Home, MessageSquare, Camera, BookOpen, CalendarCheck, Users } from 'lucide-react';
 
 interface NavigationProps {
   currentRoute: AppRoute;
@@ -13,6 +13,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentRoute, setRoute }) => {
     { route: AppRoute.SCHEDULE, label: 'Lịch vụ', icon: CalendarCheck },
     { route: AppRoute.CHAT, label: 'Tư vấn', icon: MessageSquare },
     { route: AppRoute.DIAGNOSIS, label: 'Chẩn đoán', icon: Camera },
+    { route: AppRoute.FORUM, label: 'Diễn đàn', icon: Users },
     { route: AppRoute.LIBRARY, label: 'Kiến thức', icon: BookOpen },
   ];
 
@@ -53,7 +54,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentRoute, setRoute }) => {
           <button
             key={item.route}
             onClick={() => setRoute(item.route)}
-            className={`flex flex-col items-center p-2 rounded-lg min-w-[60px] transition-colors ${
+            className={`flex flex-col items-center p-2 rounded-lg min-w-[50px] transition-colors ${
               currentRoute === item.route
                 ? 'text-emerald-600 bg-emerald-50'
                 : 'text-gray-400 hover:text-emerald-500'

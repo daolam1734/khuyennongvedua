@@ -27,7 +27,8 @@ export enum AppRoute {
   CHAT = 'chat',
   DIAGNOSIS = 'diagnosis',
   LIBRARY = 'library',
-  SCHEDULE = 'schedule'
+  SCHEDULE = 'schedule',
+  FORUM = 'forum'
 }
 
 export interface RegionInfo {
@@ -92,4 +93,19 @@ export interface WeatherData {
   isDay: boolean;
   loading: boolean;
   error?: string;
+}
+
+export interface ForumPost {
+  id: string;
+  author: string;
+  role: 'Nông dân' | 'Chuyên gia' | 'Thương lái' | 'Admin';
+  avatar?: string;
+  title: string;
+  content: string;
+  category: 'kithuat' | 'thitruong' | 'saubenh' | 'muaban';
+  likes: number;
+  comments: number;
+  timestamp: string;
+  images?: string[];
+  isPinned?: boolean;
 }

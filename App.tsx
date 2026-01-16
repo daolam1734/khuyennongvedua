@@ -5,6 +5,7 @@ import ChatPage from './pages/ChatPage';
 import DiagnosisPage from './pages/DiagnosisPage';
 import LibraryPage from './pages/LibraryPage';
 import SchedulePage from './pages/SchedulePage';
+import ForumPage from './pages/ForumPage';
 import { AppRoute, RegionInfo, WeatherData } from './types';
 import { REGIONS } from './constants';
 import { fetchWeatherData } from './services/weatherService';
@@ -66,6 +67,8 @@ const App: React.FC = () => {
         return <DiagnosisPage selectedRegion={selectedRegion} />;
       case AppRoute.LIBRARY:
         return <LibraryPage onAskCategory={navigateToChatWithPrompt} />;
+      case AppRoute.FORUM:
+        return <ForumPage onAskAdvice={navigateToChatWithPrompt} />;
       default:
         return (
           <Home 
